@@ -69,7 +69,9 @@ document.addEventListener("DOMContentLoaded", () => {
         formFields.appendChild(divNotas);
     };
 
-    criarCampos("votorantim"); // Agora inicia com Votorantim
+    // ✅ Define o template inicial como Votorantim
+    empresaSelect.value = "votorantim"; 
+    criarCampos("votorantim");
 
     empresaSelect.addEventListener("change", () => {
         criarCampos(empresaSelect.value);
