@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formFields.appendChild(divNotas);
     };
 
-    criarCampos("allianz"); // Carrega Allianz por padrão
+    criarCampos("votorantim"); // Agora inicia com Votorantim
 
     empresaSelect.addEventListener("change", () => {
         criarCampos(empresaSelect.value);
