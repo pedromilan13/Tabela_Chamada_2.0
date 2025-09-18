@@ -35,26 +35,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const templatesCampos = {
         votorantim: ["nome","telefone","email","investida","horario","localizacao","hostname"],
-        allianz: ["usuário","nome","email","telefone","cpf","localizacao"], // Atualizado
+        allianz: ["usuário","nome","email","telefone","cpf","localizacao"], // Adicionado localização
         leroy: ["nome","ldap","telefone","disponibilidade","localidade"],
         unimed: ["nome","chamado","funcional","email","telefone","localidade","horario","hostname"]
     };
 
+    // --- Função para criar campos ---
     const criarCampos = (empresa) => {
         formFields.innerHTML = "";
         templatesCampos[empresa].forEach(id => {
             const div = document.createElement("div");
             div.className = "input-group";
+
             const icon = document.createElement("i");
             icon.className = `mdi ${campoIcones[id] || "mdi-account"}`;
+
             const input = document.createElement("input");
             input.id = id;
             input.type = "text";
             input.placeholder = id.charAt(0).toUpperCase() + id.slice(1);
+
             div.appendChild(icon);
             div.appendChild(input);
             formFields.appendChild(div);
         });
+
         // Bloco de notas
         const divNotas = document.createElement("div");
         divNotas.className = "input-group wide";
@@ -69,15 +74,17 @@ document.addEventListener("DOMContentLoaded", () => {
         formFields.appendChild(divNotas);
     };
 
-    // ✅ Define o template inicial como Votorantim
-    empresaSelect.value = "votorantim"; 
+    // --- Define template inicial como Votorantim ---
+    empresaSelect.value = "votorantim";
     criarCampos("votorantim");
 
+    // --- Alteração de template pelo dropdown ---
     empresaSelect.addEventListener("change", () => {
         criarCampos(empresaSelect.value);
         templateArea.value = "";
     });
 
+    // --- Gerar template ---
     gerarBtn.addEventListener("click", () => {
         const inputs = Array.from(formFields.querySelectorAll("input, textarea"));
         let templateText = "==============\nDados do usuário\n==============\n\n";
@@ -89,6 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         templateArea.value = templateText.trim();
     });
 
+    // --- Limpar campos ---
     limparBtn.addEventListener("click", () => {
         const inputs = Array.from(formFields.querySelectorAll("input, textarea"));
         inputs.forEach(i => i.value = "");
@@ -97,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
         seletorTemplates.selectedIndex = 0;
     });
 
-    // Acordeão
+    // --- Acordeão gerenciar templates ---
     gerenciarTemplatesHeader.addEventListener("click", () => {
         gerenciarTemplatesContent.classList.toggle("expanded");
         gerenciarTemplatesHeader.classList.toggle("expanded");
@@ -105,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     gerenciarTemplatesHeader.classList.add("collapsed");
 
+    // --- Gerenciar templates no localStorage ---
     const carregarTemplates = () => JSON.parse(localStorage.getItem("templatesNomeados")) || {};
     const salvarTemplate = (nome, conteudo) => {
         const templates = carregarTemplates();
@@ -147,6 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
+    // --- Eventos salvar, carregar, excluir, renomear ---
     salvarBtn.addEventListener("click", () => {
         const nome = nomeInput.value.trim();
         const conteudo = templateArea.value.trim();
