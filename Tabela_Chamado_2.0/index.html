@@ -4,31 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Template de Chamados</title>
-    <link rel="stylesheet" href="style.css" />
+    <!-- CSS com versão para evitar cache -->
+    <link rel="stylesheet" href="style.css?v=1.0" />
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet" />
-    <script src="script.js" defer></script>
+    <!-- JS com versão para evitar cache -->
+    <script src="script.js?v=1.0" defer></script>
 </head>
 <body class="dark">
     <div class="container">
         <h1>Template de Chamados</h1>
 
-        <!-- Seletor de Template -->
         <section class="template-selector">
             <label for="empresa">Selecionar Template:</label>
             <select id="empresa">
-                <option value="votorantim" selected>Votorantim</option>
-                <option value="allianz">Allianz</option>
+                <option value="votorantim">Votorantim</option>
+                <option value="allianz" selected>Allianz</option>
                 <option value="leroy">Leroy</option>
                 <option value="unimed">Unimed</option>
             </select>
         </section>
 
-        <!-- Formulário Dinâmico -->
         <section class="form-section" id="formSection">
             <h2>Dados do Usuário</h2>
-            <div class="grid" id="formFields">
-                <!-- Campos serão gerados dinamicamente pelo JS -->
-            </div>
+            <div class="grid" id="formFields"></div>
 
             <div class="actions">
                 <button class="btn azul" id="gerar"><i class="mdi mdi-file-document-outline"></i> Gerar Template</button>
