@@ -18,13 +18,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const campoIcones = {
         nome: "mdi-account",
+        usuário: "mdi-account-circle",
         telefone: "mdi-phone",
         email: "mdi-email",
+        cpf: "mdi-card-account-details",
+        localizacao: "mdi-map-marker",
         investida: "mdi-office-building",
         horario: "mdi-clock",
-        localizacao: "mdi-map-marker",
         hostname: "mdi-desktop-classic",
-        cpf: "mdi-card-account-details",
         ldap: "mdi-account",
         disponibilidade: "mdi-calendar-clock",
         localidade: "mdi-map-marker",
@@ -34,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const templatesCampos = {
         votorantim: ["nome","telefone","email","investida","horario","localizacao","hostname"],
-        allianz: ["usuário","email","telefone","cpf"],
+        allianz: ["usuário","nome","email","telefone","cpf","localizacao"], // Atualizado
         leroy: ["nome","ldap","telefone","disponibilidade","localidade"],
         unimed: ["nome","chamado","funcional","email","telefone","localidade","horario","hostname"]
     };
@@ -68,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formFields.appendChild(divNotas);
     };
 
-    criarCampos("votorantim");
+    criarCampos("allianz"); // Carrega Allianz por padrão
 
     empresaSelect.addEventListener("change", () => {
         criarCampos(empresaSelect.value);
@@ -94,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
         seletorTemplates.selectedIndex = 0;
     });
 
-    // Seção "Gerenciar Templates" - acordeão funcional
+    // Acordeão
     gerenciarTemplatesHeader.addEventListener("click", () => {
         gerenciarTemplatesContent.classList.toggle("expanded");
         gerenciarTemplatesHeader.classList.toggle("expanded");
