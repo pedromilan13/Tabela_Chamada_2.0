@@ -1,116 +1,189 @@
-/* Reset básico */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+document.addEventListener("DOMContentLoaded", () => {
+    const formFields = document.getElementById("formFields");
+    const gerarBtn = document.getElementById("gerar");
+    const limparBtn = document.getElementById("limpar");
+    const salvarBtn = document.getElementById("salvarNomeado");
+    const excluirBtn = document.getElementById("excluirTemplate");
+    const carregarBtn = document.getElementById("carregarTemplate");
+    const limparListaBtn = document.getElementById("limparLista");
+    const editarNomeTemplateBtn = document.getElementById("editarNomeTemplate");
+    const copiarTemplateGeradoBtn = document.getElementById("copiarTemplateGerado");
+    const templateArea = document.getElementById("template");
+    const nomeInput = document.getElementById("nomeTemplate");
+    const seletorTemplates = document.getElementById("templateSelecionado");
+    const empresaSelect = document.getElementById("empresa");
 
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-  background-color: #121212;
-  color: #f0f0f0;
-  font-family: Arial, sans-serif;
-}
+    const gerenciarTemplatesHeader = document.getElementById("gerenciarTemplatesHeader");
+    const gerenciarTemplatesContent = document.getElementById("gerenciarTemplatesContent");
 
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+    const campoIcones = {
+        nome: "mdi-account",
+        usuário: "mdi-account-circle",
+        telefone: "mdi-phone",
+        email: "mdi-email",
+        cpf: "mdi-card-account-details",
+        localizacao: "mdi-map-marker",
+        investida: "mdi-office-building",
+        horario: "mdi-clock",
+        hostname: "mdi-desktop-classic",
+        ldap: "mdi-account",
+        disponibilidade: "mdi-calendar-clock",
+        localidade: "mdi-map-marker",
+        chamado: "mdi-file-document",
+        funcional: "mdi-account-key"
+    };
 
-.container {
-  flex: 1;
-  max-width: 450px;
-  margin: 20px auto;
-  background-color: #1e1e1e;
-  padding: 30px 25px;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.3);
-  overflow-y: auto;
-}
+    const templatesCampos = {
+        votorantim: ["nome","telefone","email","investida","horario","localizacao","hostname"],
+        allianz: ["usuário","nome","email","telefone","cpf","localizacao"], // Atualizado
+        leroy: ["nome","ldap","telefone","disponibilidade","localidade"],
+        unimed: ["nome","chamado","funcional","email","telefone","localidade","horario","hostname"]
+    };
 
-h1 {
-  margin-bottom: 30px;
-  color: #4fc3f7;
-  font-size: 28px;
-  text-align: center;
-}
+    const criarCampos = (empresa) => {
+        formFields.innerHTML = "";
+        templatesCampos[empresa].forEach(id => {
+            const div = document.createElement("div");
+            div.className = "input-group";
+            const icon = document.createElement("i");
+            icon.className = `mdi ${campoIcones[id] || "mdi-account"}`;
+            const input = document.createElement("input");
+            input.id = id;
+            input.type = "text";
+            input.placeholder = id.charAt(0).toUpperCase() + id.slice(1);
+            div.appendChild(icon);
+            div.appendChild(input);
+            formFields.appendChild(div);
+        });
+        // Bloco de notas
+        const divNotas = document.createElement("div");
+        divNotas.className = "input-group wide";
+        const iconNotas = document.createElement("i");
+        iconNotas.className = "mdi mdi-clipboard-text-outline";
+        const textareaNotas = document.createElement("textarea");
+        textareaNotas.id = "notasPessoais";
+        textareaNotas.rows = 4;
+        textareaNotas.placeholder = "Notas pessoais sobre o chamado (para seu uso, não gerado em templates)";
+        divNotas.appendChild(iconNotas);
+        divNotas.appendChild(textareaNotas);
+        formFields.appendChild(divNotas);
+    };
 
-h2 {
-  margin-bottom: 15px;
-  color: #4fc3f7;
-  font-size: 20px;
-}
+    criarCampos("allianz"); // Carrega Allianz por padrão
 
-.template-selector {
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+    empresaSelect.addEventListener("change", () => {
+        criarCampos(empresaSelect.value);
+        templateArea.value = "";
+    });
 
-.template-selector label {
-  font-weight: bold;
-}
+    gerarBtn.addEventListener("click", () => {
+        const inputs = Array.from(formFields.querySelectorAll("input, textarea"));
+        let templateText = "==============\nDados do usuário\n==============\n\n";
+        inputs.forEach(input => {
+            if(input.id !== "notasPessoais") {
+                templateText += `${input.placeholder}: ${input.value || "Não informado"}\n`;
+            }
+        });
+        templateArea.value = templateText.trim();
+    });
 
-.template-selector select {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #333;
-  background-color: #2a2a2a;
-  color: #fff;
-}
+    limparBtn.addEventListener("click", () => {
+        const inputs = Array.from(formFields.querySelectorAll("input, textarea"));
+        inputs.forEach(i => i.value = "");
+        templateArea.value = "";
+        nomeInput.value = "";
+        seletorTemplates.selectedIndex = 0;
+    });
 
-/* Resto do CSS mantém o seu estilo original */
-.grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 25px; }
-.input-group { display: flex; align-items: center; background-color: #2a2a2a; padding: 12px 16px; border-radius: 4px; transition: background 0.2s; }
-.input-group:hover { background-color: #333; }
-.input-group i { font-size: 22px; color: #aaa; margin-right: 14px; }
-.input-group input, .input-group textarea { flex: 1; background: transparent; border: none; color: #fff; font-size: 16px; outline: none; padding: 6px 0; }
-.input-group.wide { grid-column: span 1; }
-textarea { resize: vertical; height: 90px; }
+    // Acordeão
+    gerenciarTemplatesHeader.addEventListener("click", () => {
+        gerenciarTemplatesContent.classList.toggle("expanded");
+        gerenciarTemplatesHeader.classList.toggle("expanded");
+        gerenciarTemplatesHeader.classList.toggle("collapsed");
+    });
+    gerenciarTemplatesHeader.classList.add("collapsed");
 
-.btn { padding: 14px 20px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 16px; }
-.btn i { font-size: 20px; }
-.btn.azul { background-color: #2196f3; color: white; } .btn.azul:hover { background-color: #1976d2; }
-.btn.vermelho { background-color: #f44336; color: white; } .btn.vermelho:hover { background-color: #c62828; }
-.btn.cinza { background-color: #888; color: white; } .btn.cinza:hover { background-color: #555; }
+    const carregarTemplates = () => JSON.parse(localStorage.getItem("templatesNomeados")) || {};
+    const salvarTemplate = (nome, conteudo) => {
+        const templates = carregarTemplates();
+        if (templates[nome] && !confirm(`Já existe um template chamado "${nome}". Sobrescrever?`)) return;
+        templates[nome] = conteudo;
+        localStorage.setItem("templatesNomeados", JSON.stringify(templates));
+        popularSeletor();
+    };
+    const excluirTemplate = (nome) => {
+        const templates = carregarTemplates();
+        if (templates[nome] && confirm(`Tem certeza que deseja excluir "${nome}"?`)) {
+            delete templates[nome];
+            localStorage.setItem("templatesNomeados", JSON.stringify(templates));
+            popularSeletor();
+            templateArea.value = "";
+            nomeInput.value = "";
+        }
+    };
+    const renomearTemplate = (nomeAntigo, novoNome) => {
+        const templates = carregarTemplates();
+        if (!templates[nomeAntigo]) return alert("Template não encontrado.");
+        if (novoNome === nomeAntigo) return alert("O novo nome é igual ao antigo.");
+        if (templates[novoNome] && !confirm(`Já existe "${novoNome}". Sobrescrever?`)) return;
+        templates[novoNome] = templates[nomeAntigo];
+        delete templates[nomeAntigo];
+        localStorage.setItem("templatesNomeados", JSON.stringify(templates));
+        popularSeletor();
+        nomeInput.value = novoNome;
+        alert(`Template renomeado para "${novoNome}"`);
+    };
 
-.actions { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px; margin-bottom: 30px; }
+    const popularSeletor = () => {
+        const templates = carregarTemplates();
+        seletorTemplates.innerHTML = "<option value=''>-- Selecionar template salvo --</option>";
+        Object.keys(templates).reverse().forEach(nome => {
+            const option = document.createElement("option");
+            option.value = nome;
+            option.textContent = nome;
+            seletorTemplates.appendChild(option);
+        });
+    };
 
-#template { width: 100%; height: 400px; padding: 16px; background-color: #2a2a2a; color: #fff; border: 1px solid #333; border-radius: 6px; font-family: monospace; font-size: 16px; line-height: 1.6; white-space: pre-wrap; resize: vertical; margin-bottom: 25px; }
-#copiarTemplateGerado { margin-top: -10px; margin-bottom: 30px; width: 100%; }
+    salvarBtn.addEventListener("click", () => {
+        const nome = nomeInput.value.trim();
+        const conteudo = templateArea.value.trim();
+        if (!nome) return alert("Digite um nome para o template.");
+        if (!conteudo) return alert("Gere um template antes de salvar.");
+        salvarTemplate(nome, conteudo);
+        alert("Template salvo com sucesso!");
+    });
 
-.saved-section .input-group.wide { margin-bottom: 15px; }
-.accordion-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; background-color: #2a2a2a; padding: 15px 20px; border-radius: 8px; margin-bottom: 15px; transition: background-color 0.2s ease; border: 1px solid #333; }
-.accordion-header:hover { background-color: #333; }
-.accordion-header h2 { margin: 0; color: #4fc3f7; font-size: 20px; }
-.accordion-header i { font-size: 24px; color: #aaa; transition: transform 0.3s ease; }
-.accordion-header.collapsed i { transform: rotate(0deg); }
-.accordion-header.expanded i { transform: rotate(180deg); }
+    seletorTemplates.addEventListener("change", () => nomeInput.value = seletorTemplates.value || "");
+    carregarBtn.addEventListener("click", () => {
+        const nome = seletorTemplates.value;
+        const templates = carregarTemplates();
+        if (!nome || !templates[nome]) return alert("Selecione um template válido.");
+        templateArea.value = templates[nome];
+        nomeInput.value = nome;
+    });
+    excluirBtn.addEventListener("click", () => {
+        const nome = seletorTemplates.value;
+        if (!nome) return alert("Selecione um template.");
+        excluirTemplate(nome);
+    });
+    editarNomeTemplateBtn.addEventListener("click", () => {
+        const nomeAntigo = seletorTemplates.value;
+        if (!nomeAntigo) return alert("Selecione um template.");
+        const novoNome = prompt(`Digite novo nome para "${nomeAntigo}":`);
+        if (novoNome && novoNome.trim() !== "") renomearTemplate(nomeAntigo, novoNome.trim());
+        else if(novoNome !== null) alert("O nome do template não pode ser vazio.");
+    });
+    limparListaBtn.addEventListener("click", () => {
+        seletorTemplates.selectedIndex = 0;
+        nomeInput.value = "";
+    });
+    copiarTemplateGeradoBtn.addEventListener("click", async () => {
+        const contentToCopy = templateArea.value.trim();
+        if (!contentToCopy) return alert("Não há conteúdo para copiar.");
+        try { await navigator.clipboard.writeText(contentToCopy); alert("Conteúdo copiado!"); }
+        catch { alert("Não foi possível copiar automaticamente."); }
+    });
 
-.accordion-content { overflow: hidden; max-height: 0; transition: max-height 0.4s ease-out, opacity 0.4s ease-out; opacity: 0; padding: 0 20px; }
-.accordion-content.expanded { max-height: 500px; opacity: 1; padding-top: 0; padding-bottom: 20px; }
-
-.saved-controls { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 25px; }
-#templateSelecionado { flex: 1; background-color: #2a2a2a; color: white; border: 1px solid #333; border-radius: 6px; font-family: monospace; font-size: 16px; padding: 10px; height: 180px; overflow-y: auto; overflow-x: auto; min-width: 280px; }
-.buttons-vertical { display: flex; flex-direction: column; gap: 14px; min-width: 60px; }
-
-@media (max-width: 768px) {
-  .grid { grid-template-columns: 1fr !important; }
-  .actions { flex-direction: column; align-items: stretch; }
-  .btn { justify-content: center; width: 100%; }
-  .saved-controls { flex-direction: column; gap: 15px; }
-  #templateSelecionado { width: 100%; height: auto; min-height: 150px; }
-  .buttons-vertical { flex-direction: row; justify-content: space-around; width: 100%; min-width: 0; gap: 10px; }
-  .buttons-vertical .btn { width: auto; flex-grow: 1; }
-  textarea#template { height: 300px; font-size: 15px; }
-  h1 { font-size: 1.8rem; }
-  .container { padding: 25px 20px; margin: 10px auto; max-width: none; width: auto; }
-  .form-section { display: flex; flex-direction: column; gap: 20px; }
-}
-
-.footer { margin-top: auto; text-align: center; font-size: 14px; color: #aaa; border-top: 1px solid #333; padding: 15px 10px; background-color: #1e1e1e; }
-.footer strong { color: #4fc3f7; }
+    popularSeletor();
+});
